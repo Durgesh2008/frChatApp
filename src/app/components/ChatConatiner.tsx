@@ -3,33 +3,40 @@ import Image from "next/image";
 import InputEmoji from "react-input-emoji";
 import React, { useEffect, useRef, useState } from "react";
 import ProfileCard from "./ProfileCard";
-import send from "../../../public/send.png";
-import log from "../../../public/login.jpg";
+import send from "../../../public/send.png"
+import log from "../../../public/login.jpg"
 import Message from "./Message";
 import { useRouter } from "next/navigation";
 import { allMsgOfUser, alldata, postmsg } from "../Apidata";
 import { contact,msg } from "../Conatnts";
 import { io } from "socket.io-client";
-import { v4 as uuidv4 } from "uuid";
 const host = "http://localhost:8000";
 const ChatConatiner = () => {
   const [Seletected, setSeletected] = useState("");
   const [isOpen, setisOpen] = useState(false);
-  const [contacts, setContacts] = useState<contact | undefined>(undefined);
+  const [contacts, setContacts] = useState<contact[]>([]);
   const [text, setText] = useState("");
   const navigate = useRouter();
   const [currchat, setcurrchat] = useState<contact>();
-  const data = JSON.parse(localStorage.getItem("chat-app-user") as string);
+  const [data,setData] =useState<any>(JSON.parse(localStorage.getItem("chat-app-user") as string)) 
   const socket = useRef<any>();
+  const router = useRouter()
  
   const [Messages,setMessages]=useState<any>([]);
   const [arrivelmsg, setarrivelmsg] = useState<any>(null);
-  const chatBoxRef = useRef();
+  const chatBoxRef = useRef<any>();
   const handleSelect = (i: string,chat:contact) => {
     setSeletected(i);
     setcurrchat(chat);
   };
-
+  useEffect(()=>{
+    let Token =JSON.parse(localStorage.getItem("chat-app-user") as string)?.success || ""
+    console.log(Token)  
+    if(!Token){
+      router.push('/')
+    }
+     // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[])
   const handleToggle = () => {
     setisOpen(!isOpen);
   };
@@ -64,7 +71,8 @@ const ChatConatiner = () => {
 
   useEffect(()=>{
     getallmsgofUser()
-  },[currchat])
+     // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[currchat?._id])
 
   const allRelatedUser = async () => {
     let x = await alldata();
@@ -80,10 +88,12 @@ const ChatConatiner = () => {
       socket.current = io(host);
       socket.current.emit("add-user", data.user._id);
     }
-  }, [Messages]);
+     // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [Messages?.text]);
 
   useEffect(() => {
     scrollToBottom();
+     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [Messages]);
   const scrollToBottom = () => {
     chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
@@ -94,7 +104,7 @@ const ChatConatiner = () => {
         setarrivelmsg({ fromSelf: false, message: msg });
       });
     }
-    // eslint-disable-next-line
+     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [Messages]);
   return (
     <>
@@ -145,8 +155,7 @@ const ChatConatiner = () => {
         >
           <div className="h-full px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800">
             <ul className="space-y-2 font-medium">
-              {contacts &&
-                contacts?.map((ele: contact) => {
+              {contacts && contacts.map((ele: contact) => {
                   return (
                     <ProfileCard
                       key={ele._id}
@@ -199,8 +208,8 @@ const ChatConatiner = () => {
 
           <div ref={chatBoxRef} className=" h-[80%] overflow-y-hidden overflow-x-hidden ">
             {
-              Messages?.map((ele:msg)=>{
-                return (<Message   item={ele} />)
+              Messages?.map((ele:msg,i:number)=>{
+                return (<Message key={i}  item={ele} />)
               })
             }
             

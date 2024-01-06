@@ -15,7 +15,7 @@ export const PostDataSignUp = async (input: Register) => {
         name,
         password,
         email,
-        image:input.image[0]
+  
       }),
     });
 

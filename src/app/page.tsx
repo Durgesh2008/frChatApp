@@ -1,17 +1,8 @@
 "use client"
-import React, { useEffect } from 'react'
+import React from 'react'
 import Toggler from './components/Toggler'
-import { useRouter } from 'next/navigation'
-const page = () => {
-  const router = useRouter()
-  useEffect(()=>{
-    let Token =JSON.parse(localStorage.getItem("chat-app-user") as string)?.success  
-    if(Token){
-      router.push('/chat')
-    }else{
-      router.push('/')
-    }
-  },[])
+const Page = () => {
+  
   return (
     <>
     <Toggler/>
@@ -19,4 +10,4 @@ const page = () => {
   )
 }
 
-export default page
+export default Page

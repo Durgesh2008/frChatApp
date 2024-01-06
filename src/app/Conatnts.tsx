@@ -23,7 +23,6 @@ _id:string
 
 
 export type msg ={
-  
 fromSelf:boolean
 message:string
 }

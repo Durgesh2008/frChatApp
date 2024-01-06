@@ -1,7 +1,7 @@
 import React from "react";
 import { msg } from "../Conatnts";
 
-const Message = ({item}:msg) => {
+const Message = ({item}:any) => {
   console.log(item)
   return (
     <div className="rounded-lg flex  p-2 items-center">
